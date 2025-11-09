@@ -1,0 +1,72 @@
+<!--pages/address/list.wxml-->
+<view class="address-list-container">
+  <!-- 地址列表 -->
+  <view class="address-list" wx:if="{{addressList.length}}">
+    <view 
+      class="address-item {{isSelectMode ? 'selectable' : ''}}"
+      wx:for="{{addressList}}"
+      wx:key="id"
+      bindtap="{{isSelectMode ? 'selectAddress' : ''}}"
+      data-index="{{index}}"
+    >
+      <!-- 默认标签 -->
+      <view class="default-tag" wx:if="{{item.isDefault}}">默认</view>
+
+      <!-- 地址信息 -->
+      <view class="address-header">
+        <text class="receiver-name">{{item.name}}</text>
+        <text class="receiver-phone">{{item.phone}}</text>
+      </view>
+      
+      <view class="address-detail">
+        <text class="address-region">{{item.region}}</text>
+        <text class="address-text">{{item.address}}</text>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="address-actions" wx:if="{{!isSelectMode}}" catchtap="stopPropagation">
+        <view 
+          class="action-item"
+          bindtap="editAddress"
+          data-id="{{item.id}}"
+        >
+          <text class="action-icon">✏️</text>
+          <text class="action-text">编辑</text>
+        </view>
+
+        <view 
+          class="action-item"
+          bindtap="deleteAddress"
+          data-id="{{item.id}}"
+          data-index="{{index}}"
+        >
+          <text class="action-icon">🗑️</text>
+          <text class="action-text">删除</text>
+        </view>
+
+        <view 
+          class="action-item"
+          wx:if="{{!item.isDefault}}"
+          bindtap="setDefaultAddress"
+          data-id="{{item.id}}"
+        >
+          <text class="action-icon">⭐</text>
+          <text class="action-text">设为默认</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:else>
+    <text class="empty-icon">📍</text>
+    <text class="empty-text">暂无收货地址</text>
+  </view>
+
+  <!-- 添加地址按钮 -->
+  <view class="bottom-bar safe-area-inset-bottom">
+    <view class="add-btn" bindtap="addAddress">
+      ➕ 新增收货地址
+    </view>
+  </view>
+</view>

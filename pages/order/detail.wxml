@@ -1,0 +1,167 @@
+<!--pages/order/detail.wxml-->
+<wxs module="utils">
+  var formatPrice = function(price) {
+    // 价格已经是以元为单位，直接格式化即可
+    return price.toFixed(2);
+  };
+  
+  module.exports = {
+    formatPrice: formatPrice
+  };
+</wxs>
+
+<view class="detail-container">
+  <scroll-view class="detail-content" scroll-y>
+    <!-- 订单状态 -->
+    <view class="status-card gradient-bg">
+      <view class="status-icon">
+        <text wx:if="{{order.status === 1}}">⏰</text>
+        <text wx:elif="{{order.status === 2}}">👨‍🍳</text>
+        <text wx:elif="{{order.status === 3}}">🚚</text>
+        <text wx:elif="{{order.status === 4}}">✅</text>
+        <text wx:else>❌</text>
+      </view>
+      <text class="status-text">{{getOrderStatusText(order.status)}}</text>
+      <text class="status-tip" wx:if="{{order.status === 1}}">请尽快完成支付</text>
+      <text class="status-tip" wx:elif="{{order.status === 2}}">商家正在制作中</text>
+      <text class="status-tip" wx:elif="{{order.status === 3}}">骑手正在配送中</text>
+    </view>
+
+    <!-- 配送信息（外卖） -->
+    <view class="info-card card" wx:if="{{order.type === 2}}">
+      <view class="card-title">配送信息</view>
+      <view class="info-row">
+        <text class="info-label">收货人</text>
+        <text class="info-value">{{order.receiverName}}</text>
+        <text 
+          class="phone-btn" 
+          bindtap="makePhoneCall"
+          data-phone="{{order.receiverPhone}}"
+        >
+          📞
+        </text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">收货地址</text>
+        <text class="info-value">{{order.address}}</text>
+      </view>
+      <view class="info-row" wx:if="{{order.deliveryTime}}">
+        <text class="info-label">配送时间</text>
+        <text class="info-value">{{order.deliveryTime}}</text>
+      </view>
+    </view>
+
+    <!-- 堂食信息 -->
+    <view class="info-card card" wx:if="{{order.type === 1}}">
+      <view class="card-title">堂食信息</view>
+      <view class="info-row">
+        <text class="info-label">桌号</text>
+        <text class="info-value">{{order.tableNo}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">就餐人数</text>
+        <text class="info-value">{{order.peopleCount}}人</text>
+      </view>
+    </view>
+
+    <!-- 商品信息 -->
+    <view class="goods-card card">
+      <view class="card-title">商品清单</view>
+      <view class="goods-list">
+        <view class="goods-item" wx:for="{{order.goodsList}}" wx:key="id">
+          <image 
+            class="goods-image" 
+            src="{{handleImageUrl(item.image)}}"
+            mode="aspectFill"
+          ></image>
+          <view class="goods-info">
+            <text class="goods-name">{{item.name}}</text>
+            <view class="goods-specs" wx:if="{{item.specs && item.specs.length}}">
+              <text class="spec-item" wx:for="{{item.specs}}" wx:for-item="spec" wx:key="index">
+                {{spec.value}}
+              </text>
+            </view>
+            <view class="goods-bottom">
+              <text class="goods-price">¥{{utils.formatPrice(item.price)}}</text>
+              <text class="goods-quantity">×{{item.quantity}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 订单信息 -->
+    <view class="order-card card">
+      <view class="card-title">订单信息</view>
+      <view class="order-row">
+        <text class="order-label">订单编号</text>
+        <view class="order-value">
+          <text class="order-no">{{order.orderNo}}</text>
+          <text class="copy-btn" bindtap="copyOrderNo">复制</text>
+        </view>
+      </view>
+      <view class="order-row">
+        <text class="order-label">订单类型</text>
+        <text class="order-value">{{getOrderTypeText(order.type)}}</text>
+      </view>
+      <view class="order-row">
+        <text class="order-label">下单时间</text>
+        <text class="order-value">{{order.createTime}}</text>
+      </view>
+      <view class="order-row" wx:if="{{order.remark}}">
+        <text class="order-label">订单备注</text>
+        <text class="order-value">{{order.remark}}</text>
+      </view>
+    </view>
+
+    <!-- 费用明细 -->
+    <view class="amount-card card">
+      <view class="card-title">费用明细</view>
+      <view class="amount-row">
+        <text class="amount-label">商品总额</text>
+        <text class="amount-value">¥{{utils.formatPrice(order.goodsAmount)}}</text>
+      </view>
+      <view class="amount-row" wx:if="{{order.type === 2 && order.deliveryFee}}">
+        <text class="amount-label">配送费</text>
+        <text class="amount-value">¥{{utils.formatPrice(order.deliveryFee)}}</text>
+      </view>
+      <view class="amount-row" wx:if="{{order.type === 2 && order.packingFee}}">
+        <text class="amount-label">打包费</text>
+        <text class="amount-value">¥{{utils.formatPrice(order.packingFee)}}</text>
+      </view>
+      <view class="amount-row" wx:if="{{order.couponDiscount > 0}}">
+        <text class="amount-label">优惠券</text>
+        <text class="amount-value discount">-¥{{utils.formatPrice(order.couponDiscount)}}</text>
+      </view>
+      <view class="amount-row total-row">
+        <text class="amount-label total-label">实付款</text>
+        <text class="amount-value total-value">¥{{utils.formatPrice(order.totalAmount)}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar safe-area-inset-bottom" wx:if="{{order.status}}">
+    <!-- 待支付 -->
+    <block wx:if="{{order.status === 1}}">
+      <view class="bar-btn plain-btn" bindtap="cancelOrder">取消订单</view>
+      <view class="bar-btn primary-btn" bindtap="goPay">去支付</view>
+    </block>
+
+    <!-- 配送中 -->
+    <block wx:if="{{order.status === 3 && order.type === 2}}">
+      <view class="bar-btn primary-btn" bindtap="confirmReceipt">确认收货</view>
+    </block>
+
+    <!-- 已完成 -->
+    <block wx:if="{{order.status === 4}}">
+      <view class="bar-btn plain-btn" bindtap="orderAgain">再来一单</view>
+      <view class="bar-btn primary-btn" wx:if="{{!order.commented}}" bindtap="goComment">去评价</view>
+    </block>
+
+    <!-- 已取消 -->
+    <block wx:if="{{order.status === 5}}">
+      <view class="bar-btn disabled-btn">订单已取消</view>
+    </block>
+  </view>
+</view>

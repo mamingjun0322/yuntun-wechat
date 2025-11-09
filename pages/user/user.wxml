@@ -1,0 +1,106 @@
+<!--pages/user/user.wxml-->
+<view class="user-container">
+  <!-- 用户信息区 -->
+  <view class="user-header gradient-bg">
+    <block wx:if="{{userInfo}}">
+      <view class="avatar-wrapper">
+        <text class="default-avatar" wx:if="{{!userInfo.avatar}}">👤</text>
+        <image 
+          wx:else
+          class="user-avatar" 
+          src="{{handleImageUrl(userInfo.avatar)}}"
+          mode="aspectFill"
+        ></image>
+      </view>
+      <view class="user-info">
+        <text class="user-name">{{userInfo.nickname || '微信用户'}}</text>
+        <view class="user-tags">
+          <text class="tag" wx:if="{{userInfo.level > 0}}">Lv.{{userInfo.level}}</text>
+          <text class="tag">ID: {{userInfo.id}}</text>
+        </view>
+      </view>
+      <view class="edit-profile-btn" bindtap="editProfile" wx:if="{{!userInfo.nickname || !userInfo.avatar}}">
+        <text>完善资料</text>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="avatar-wrapper">
+        <text class="default-avatar">👤</text>
+      </view>
+      <view class="user-info">
+        <text class="user-name">未登录</text>
+        <text class="login-tip" bindtap="goLogin">点击登录享更多服务 ›</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 积分和优惠券 -->
+  <view class="stats-card card" wx:if="{{userInfo}}">
+    <view class="stat-item">
+      <text class="stat-value">{{userInfo.points || 0}}</text>
+      <text class="stat-label">积分</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <text class="stat-value">{{userInfo.couponCount || 0}}</text>
+      <text class="stat-label">优惠券</text>
+    </view>
+  </view>
+
+  <!-- 我的订单 -->
+  <view class="order-card card" wx:if="{{userInfo}}">
+    <view class="card-header">
+      <text class="card-title">我的订单</text>
+      <view class="view-all" bindtap="goOrderList" data-status="0">
+        <text>查看全部</text>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+    <view class="order-tabs">
+      <view class="order-tab" bindtap="goOrderList" data-status="1">
+        <text class="tab-icon">⏰</text>
+        <text class="tab-name">待支付</text>
+      </view>
+      <view class="order-tab" bindtap="goOrderList" data-status="2">
+        <text class="tab-icon">👨‍🍳</text>
+        <text class="tab-name">制作中</text>
+      </view>
+      <view class="order-tab" bindtap="goOrderList" data-status="3">
+        <text class="tab-icon">🚚</text>
+        <text class="tab-name">配送中</text>
+      </view>
+      <view class="order-tab" bindtap="goOrderList" data-status="4">
+        <text class="tab-icon">✅</text>
+        <text class="tab-name">已完成</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-card card" wx:if="{{userInfo}}">
+    <view 
+      class="menu-item"
+      wx:for="{{menuList}}"
+      wx:key="name"
+      bindtap="goMenuPage"
+      data-index="{{index}}"
+    >
+      <view class="menu-left">
+        <text class="menu-icon">{{item.icon}}</text>
+        <text class="menu-name">{{item.name}}</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-btn" wx:if="{{userInfo}}" bindtap="logout">
+    退出登录
+  </view>
+
+  <!-- 未登录提示 -->
+  <view class="login-card card" wx:else>
+    <text class="login-text">登录后可查看更多功能</text>
+    <view class="login-button" bindtap="goLogin">立即登录</view>
+  </view>
+</view>

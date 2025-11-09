@@ -1,0 +1,253 @@
+<!--pages/index/index.wxml-->
+<wxs module="utils">
+  var formatPrice = function(price) {
+    // 价格已经是以元为单位，直接格式化即可
+    return price.toFixed(2);
+  };
+  
+  module.exports = {
+    formatPrice: formatPrice
+  };
+</wxs>
+
+<view class="page-container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="navbar-content">
+      <view class="location">
+        <text class="icon">📍</text>
+        <text class="location-text">{{shopInfo.name || '加载中...'}}</text>
+      </view>
+      <view class="search-box" bindtap="goSearch">
+        <text class="search-icon">🔍</text>
+        <text class="search-placeholder">搜索商品</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 轮播图 -->
+  <view class="banner-section" wx:if="{{bannerList.length}}">
+    <swiper class="banner-swiper" autoplay circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
+      <swiper-item wx:for="{{bannerList}}" wx:key="id">
+        <image 
+          class="banner-image" 
+          src="{{handleImageUrl(item.image)}}" 
+          mode="aspectFill"
+        ></image>
+      </swiper-item>
+    </swiper>
+  </view>
+  
+  <!-- 分类导航 -->
+  <view class="category-section" wx:if="{{categoryList.length}}">
+    <scroll-view class="category-scroll" scroll-x>
+      <view 
+        class="category-item {{currentCategory === 0 ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-id="{{0}}"
+      >
+        <text class="category-name">全部</text>
+      </view>
+      <view 
+        class="category-item {{currentCategory === item.id ? 'active' : ''}}"
+        wx:for="{{categoryList}}" 
+        wx:key="id"
+        bindtap="selectCategory"
+        data-id="{{item.id}}"
+      >
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 商品列表 -->
+  <view class="goods-section">
+    <view class="goods-list">
+      <view 
+        class="goods-item" 
+        wx:for="{{goodsList}}" 
+        wx:key="id"
+        bindtap="goGoodsDetail"
+        data-id="{{item.id}}"
+      >
+        <image 
+          class="goods-image" 
+          src="{{handleImageUrl(item.image)}}" 
+          mode="aspectFill"
+        ></image>
+        <view class="goods-info">
+          <text class="goods-name">{{item.name}}</text>
+          <text class="goods-desc">{{item.description}}</text>
+          <view class="goods-footer">
+            <view class="price-box">
+              <text class="price-symbol">¥</text>
+              <text class="price-value">{{utils.formatPrice(item.price)}}</text>
+              <text class="original-price" wx:if="{{item.originalPrice}}">
+                ¥{{utils.formatPrice(item.originalPrice)}}
+              </text>
+            </view>
+            
+            <!-- 未添加时显示加号 -->
+            <view 
+              class="add-btn" 
+              catchtap="addToCart"
+              data-goods="{{item}}"
+              wx:if="{{!item.cartQuantity || item.cartQuantity === 0}}"
+            >
+              <text class="add-icon">+</text>
+            </view>
+            
+            <!-- 已添加时显示数量控制器 -->
+            <view class="goods-quantity-control" wx:else>
+              <view 
+                class="quantity-btn minus" 
+                catchtap="decreaseGoods"
+                data-id="{{item.id}}"
+              >
+                <text class="btn-icon">-</text>
+              </view>
+              <text class="quantity-text">{{item.cartQuantity}}</text>
+              <view 
+                class="quantity-btn plus" 
+                catchtap="increaseGoods"
+                data-id="{{item.id}}"
+              >
+                <text class="btn-icon">+</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 加载状态 -->
+    <view class="load-more" wx:if="{{goodsList.length}}">
+      <text class="load-text" wx:if="{{!noMore}}">加载更多...</text>
+      <text class="load-text" wx:else>没有更多了</text>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{!loading && !goodsList.length}}">
+      <text class="empty-icon">🍱</text>
+      <text class="empty-text">暂无商品</text>
+    </view>
+  </view>
+
+  <!-- 浮动购物车按钮 -->
+  <view class="cart-float-btn" bindtap="showCartDrawer" wx:if="{{cartList.length}}">
+    <text class="cart-icon">🛒</text>
+    <view class="cart-badge" wx:if="{{cartTotalQuantity > 0}}">{{cartTotalQuantity}}</view>
+  </view>
+
+  <!-- 购物车抽屉 -->
+  <view class="cart-drawer {{showCart ? 'show' : ''}}" wx:if="{{showCart}}">
+    <view class="drawer-mask" bindtap="hideCartDrawer"></view>
+    <view class="drawer-content">
+      <!-- 抽屉头部 -->
+      <view class="drawer-header">
+        <text class="drawer-title">购物车 ({{cartList.length}})</text>
+        <view class="drawer-actions">
+          <text class="clear-btn" bindtap="clearCart" wx:if="{{cartList.length}}">清空</text>
+          <text class="close-btn" bindtap="hideCartDrawer">✕</text>
+        </view>
+      </view>
+
+      <!-- 购物车列表 -->
+      <scroll-view class="drawer-body" scroll-y wx:if="{{cartList.length}}">
+        <view class="cart-item" wx:for="{{cartList}}" wx:key="index">
+          <!-- 选择框 -->
+          <view 
+            class="checkbox {{item.selected ? 'checked' : ''}}"
+            bindtap="toggleCartSelect"
+            data-index="{{index}}"
+          >
+            <text class="check-icon" wx:if="{{item.selected}}">✓</text>
+          </view>
+
+          <!-- 商品信息 -->
+          <image 
+            class="cart-goods-image" 
+            src="{{handleImageUrl(item.image)}}" 
+            mode="aspectFill"
+          ></image>
+
+          <view class="cart-goods-info">
+            <view class="cart-goods-name">{{item.name}}</view>
+            
+            <!-- 规格 -->
+            <view class="cart-goods-specs" wx:if="{{item.specs && Object.keys(item.specs).length}}">
+              <text 
+                class="spec-item" 
+                wx:for="{{Object.keys(item.specs)}}" 
+                wx:for-item="key"
+                wx:key="key"
+              >
+                {{item.specs[key].value}}
+              </text>
+            </view>
+
+            <view class="cart-goods-footer">
+              <view class="cart-price">
+                <text class="price-symbol">¥</text>
+                <text class="price-value">{{utils.formatPrice(item.price)}}</text>
+              </view>
+
+              <!-- 数量控制 -->
+              <view class="cart-quantity-control">
+                <view 
+                  class="cart-control-btn" 
+                  bindtap="decreaseCartQuantity"
+                  data-index="{{index}}"
+                >
+                  -
+                </view>
+                <view class="cart-quantity-value">{{item.quantity}}</view>
+                <view 
+                  class="cart-control-btn" 
+                  bindtap="increaseCartQuantity"
+                  data-index="{{index}}"
+                >
+                  +
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <!-- 空购物车 -->
+      <view class="drawer-empty" wx:else>
+        <text class="empty-icon">🛒</text>
+        <text class="empty-text">购物车是空的</text>
+      </view>
+
+      <!-- 底部结算栏 -->
+      <view class="drawer-footer" wx:if="{{cartList.length}}">
+        <view class="footer-left">
+          <!-- 全选 -->
+          <view class="select-all" bindtap="toggleCartSelectAll">
+            <view class="checkbox {{cartAllSelected ? 'checked' : ''}}">
+              <text class="check-icon" wx:if="{{cartAllSelected}}">✓</text>
+            </view>
+            <text class="select-text">全选</text>
+          </view>
+
+          <!-- 合计 -->
+          <view class="total-info">
+            <text class="total-label">合计：</text>
+            <text class="total-symbol">¥</text>
+            <text class="total-value">{{utils.formatPrice(cartTotalPrice)}}</text>
+          </view>
+        </view>
+
+        <!-- 结算按钮 -->
+        <view 
+          class="cart-checkout-btn {{cartTotalQuantity > 0 ? 'active' : ''}}" 
+          bindtap="cartCheckout"
+        >
+          结算({{cartTotalQuantity}})
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

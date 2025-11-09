@@ -1,0 +1,78 @@
+<!--pages/address/edit.wxml-->
+<view class="edit-container">
+  <view class="form-section">
+    <!-- 姓名 -->
+    <view class="form-item">
+      <text class="form-label required">姓名</text>
+      <input 
+        class="form-input" 
+        placeholder="请输入收货人姓名"
+        value="{{name}}"
+        bindinput="inputName"
+        maxlength="20"
+      />
+    </view>
+
+    <!-- 手机号 -->
+    <view class="form-item">
+      <text class="form-label required">手机号</text>
+      <input 
+        class="form-input" 
+        type="number"
+        placeholder="请输入手机号"
+        value="{{phone}}"
+        bindinput="inputPhone"
+        maxlength="11"
+      />
+    </view>
+
+    <!-- 地区 -->
+    <view class="form-item" bindtap="chooseRegion">
+      <text class="form-label required">所在地区</text>
+      <input 
+        class="form-input" 
+        placeholder="请输入省市区"
+        value="{{region}}"
+        bindinput="inputRegion"
+        maxlength="50"
+      />
+    </view>
+
+    <!-- 详细地址 -->
+    <view class="form-item full">
+      <text class="form-label required">详细地址</text>
+      <textarea 
+        class="form-textarea" 
+        placeholder="请输入详细地址（如街道、楼栋号、单元室等）"
+        value="{{address}}"
+        bindinput="inputAddress"
+        maxlength="200"
+        auto-height
+      />
+    </view>
+
+    <!-- 选择位置 -->
+    <view class="location-btn" bindtap="chooseLocation">
+      <text class="location-icon">📍</text>
+      <text class="location-text">选择位置（定位更准确）</text>
+    </view>
+
+    <!-- 设为默认 -->
+    <view class="default-section">
+      <text class="default-label">设为默认地址</text>
+      <switch 
+        class="default-switch" 
+        checked="{{isDefault}}"
+        bindchange="toggleDefault"
+        color="#667eea"
+      />
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="bottom-bar safe-area-inset-bottom">
+    <view class="save-btn" bindtap="saveAddress">
+      保存
+    </view>
+  </view>
+</view>

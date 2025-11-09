@@ -1,0 +1,8 @@
+<!--pages/payment/webview.wxml-->
+<view class="payment-container">
+  <web-view wx:if="{{paymentUrl}}" src="{{paymentUrl}}"></web-view>
+  <view wx:else class="loading">
+    <text>加载中...</text>
+  </view>
+</view>
+

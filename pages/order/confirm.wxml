@@ -1,0 +1,199 @@
+<!--pages/order/confirm.wxml-->
+<wxs module="utils">
+  var formatPrice = function(price) {
+    // 价格已经是以元为单位，直接格式化即可
+    return price.toFixed(2);
+  };
+  
+  module.exports = {
+    formatPrice: formatPrice
+  };
+</wxs>
+
+<view class="confirm-container">
+  <scroll-view class="confirm-content" scroll-y>
+    <!-- 订单类型选择 -->
+    <view class="order-type-card card">
+      <view class="card-title">订单类型</view>
+      <view class="type-options">
+        <view 
+          class="type-option {{orderType === 1 ? 'active' : ''}}"
+          bindtap="switchOrderType"
+          data-type="{{1}}"
+        >
+          <text class="type-icon">🍽️</text>
+          <text class="type-name">堂食</text>
+        </view>
+        <view 
+          class="type-option {{orderType === 2 ? 'active' : ''}}"
+          bindtap="switchOrderType"
+          data-type="{{2}}"
+        >
+          <text class="type-icon">🛵</text>
+          <text class="type-name">外卖</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 堂食信息 -->
+    <view class="info-card card" wx:if="{{orderType === 1}}">
+      <view class="card-title">🍽️ 堂食信息</view>
+      <view class="form-item">
+        <text class="label">桌号</text>
+        <input 
+          class="input" 
+          placeholder="请输入桌号"
+          value="{{tableNo}}"
+          bindinput="inputTableNo"
+        />
+      </view>
+      <view class="form-item">
+        <text class="label">就餐人数</text>
+        <view class="people-select">
+          <view 
+            class="people-btn {{peopleCount === item ? 'active' : ''}}"
+            wx:for="{{[1,2,3,4,5,6]}}"
+            wx:key="*this"
+            bindtap="selectPeopleCount"
+            data-count="{{item}}"
+          >
+            {{item}}人
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 外卖信息 -->
+    <view class="info-card card" wx:if="{{orderType === 2}}">
+      <view class="card-title">🛵 配送信息</view>
+      
+      <!-- 收货地址 -->
+      <view class="address-section" bindtap="selectAddress">
+        <view class="address-content" wx:if="{{address}}">
+          <view class="address-header">
+            <text class="receiver-name">{{address.name}}</text>
+            <text class="receiver-phone">{{address.phone}}</text>
+          </view>
+          <view class="address-detail">{{address.region}} {{address.address}}</view>
+        </view>
+        <view class="no-address" wx:else>
+          <text class="placeholder">请选择收货地址</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+
+      <!-- 配送时间 -->
+      <view class="form-item" bindtap="selectDeliveryTime">
+        <text class="label">配送时间</text>
+        <view class="value">
+          <text>{{deliveryTime}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+
+      <!-- 餐具 -->
+      <view class="form-item">
+        <text class="label">餐具份数</text>
+        <view class="tableware-select">
+          <view 
+            class="tableware-btn {{tableware === item ? 'active' : ''}}"
+            wx:for="{{[0,1,2,3,4]}}"
+            wx:key="*this"
+            bindtap="selectTableware"
+            data-count="{{item}}"
+          >
+            {{item}}份
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 商品列表 -->
+    <view class="goods-card card">
+      <view class="card-title">商品清单</view>
+      <view class="goods-list">
+        <view class="goods-item" wx:for="{{goodsList}}" wx:key="id">
+          <image 
+            class="goods-image" 
+            src="{{handleImageUrl(item.image)}}"
+            mode="aspectFill"
+          ></image>
+          <view class="goods-info">
+            <text class="goods-name">{{item.name}}</text>
+            <view class="goods-specs" wx:if="{{item.specs && Object.keys(item.specs).length}}">
+              <text 
+                class="spec-text"
+                wx:for="{{Object.values(item.specs)}}"
+                wx:for-item="spec"
+                wx:key="index"
+              >
+                {{spec.value}}
+              </text>
+            </view>
+            <view class="goods-bottom">
+              <text class="goods-price">¥{{utils.formatPrice(item.price)}}</text>
+              <text class="goods-quantity">×{{item.quantity}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 优惠券 -->
+    <view class="coupon-card card" bindtap="selectCoupon">
+      <text class="coupon-label">优惠券</text>
+      <view class="coupon-value">
+        <text class="coupon-text">{{selectedCoupon ? selectedCoupon.name : '暂无可用'}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 备注 -->
+    <view class="remark-card card">
+      <view class="card-title">备注</view>
+      <textarea 
+        class="remark-input"
+        placeholder="选填，可以告诉我们您的特殊要求"
+        value="{{remark}}"
+        bindinput="inputRemark"
+        maxlength="200"
+      />
+    </view>
+
+    <!-- 费用明细 -->
+    <view class="amount-card card">
+      <view class="card-title">费用明细</view>
+      <view class="amount-item">
+        <text class="amount-label">商品总额</text>
+        <text class="amount-value">¥{{utils.formatPrice(goodsAmount)}}</text>
+      </view>
+      <view class="amount-item" wx:if="{{orderType === 2}}">
+        <text class="amount-label">配送费</text>
+        <text class="amount-value">¥{{utils.formatPrice(deliveryFee)}}</text>
+      </view>
+      <view class="amount-item" wx:if="{{orderType === 2}}">
+        <text class="amount-label">打包费</text>
+        <text class="amount-value">¥{{utils.formatPrice(packingFee)}}</text>
+      </view>
+      <view class="amount-item" wx:if="{{couponDiscount > 0}}">
+        <text class="amount-label">优惠券</text>
+        <text class="amount-value discount">-¥{{utils.formatPrice(couponDiscount)}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部提交 -->
+  <view class="bottom-bar safe-area-inset-bottom">
+    <view class="total-amount">
+      <text class="total-label">合计：</text>
+      <text class="total-symbol">¥</text>
+      <text class="total-value">{{utils.formatPrice(totalAmount)}}</text>
+    </view>
+    <view 
+      class="submit-btn {{submitting ? 'disabled' : ''}}" 
+      catchtap="submitOrder"
+    >
+      {{submitting ? '提交中...' : '提交订单'}}
+    </view>
+  </view>
+</view>
