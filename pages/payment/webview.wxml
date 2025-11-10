@@ -1,8 +1,15 @@
 <!--pages/payment/webview.wxml-->
 <view class="payment-container">
-  <web-view wx:if="{{paymentUrl}}" src="{{paymentUrl}}"></web-view>
-  <view wx:else class="loading">
-    <text>加载中...</text>
+  <view wx:if="{{paymentUrl}}" class="qrcode-wrapper">
+    <view class="qrcode-title">请使用微信扫码支付</view>
+    <image class="qrcode-image" src="{{paymentUrl}}" mode="aspectFit" show-menu-by-longpress="{{true}}" binderror="onImageError"></image>
+    <view class="qrcode-tip">长按图片可保存到相册</view>
+  </view>
+  <view wx:else class="empty-wrapper">
+    <view class="empty-icon">📷</view>
+    <view class="empty-text">收款码加载失败</view>
+    <view class="empty-tip">请联系商家或稍后重试</view>
+    <button class="retry-btn" bindtap="retryLoad">返回重试</button>
   </view>
 </view>
 

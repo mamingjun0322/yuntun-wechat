@@ -348,22 +348,23 @@ Page({
           icon: 'success'
         })
 
-        // 如果返回了支付链接，跳转到支付页面
-        if (res.data && res.data.paymentUrl) {
-          setTimeout(() => {
-            // 使用 web-view 打开支付链接
+        // 跳转到支付页面展示收款二维码
+        // 优先使用 qrCodeUrl（收款码图片），如果没有则使用 paymentUrl
+        const qrCodeUrl = res.data?.qrCodeUrl || res.data?.paymentUrl || ''
+        
+        setTimeout(() => {
+          if (qrCodeUrl) {
+            // 有收款码，跳转到支付页面
             wx.navigateTo({
-              url: `/pages/payment/webview?url=${encodeURIComponent(res.data.paymentUrl)}`
+              url: `/pages/payment/webview?url=${encodeURIComponent(qrCodeUrl)}`
             })
-          }, 1500)
-        } else {
-          // 没有支付链接，跳转到订单详情
-          setTimeout(() => {
-            wx.redirectTo({
-              url: `/pages/order/detail?id=${res.data.orderId}`
+          } else {
+            // 没有收款码，也跳转到支付页面，显示加载失败提示
+            wx.navigateTo({
+              url: `/pages/payment/webview?url=`
             })
-          }, 1500)
-        }
+          }
+        }, 1500)
       }
     } catch (error) {
       console.error('提交订单失败', error)

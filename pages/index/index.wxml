@@ -28,7 +28,7 @@
   <!-- 轮播图 -->
   <view class="banner-section" wx:if="{{bannerList.length}}">
     <swiper class="banner-swiper" autoplay circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
-      <swiper-item wx:for="{{bannerList}}" wx:key="id">
+      <swiper-item wx:for="{{bannerList}}" wx:key="id" bindtap="onBannerTap" data-url="{{item.url}}">
         <image 
           class="banner-image" 
           src="{{handleImageUrl(item.image)}}" 

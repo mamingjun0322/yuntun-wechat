@@ -357,6 +357,64 @@ Page({
     })
   },
 
+  /**
+   * 轮播图点击事件
+   */
+  onBannerTap(e: any) {
+    const url = e.currentTarget.dataset.url
+    
+    if (!url) {
+      console.log('轮播图未配置跳转链接')
+      return
+    }
+
+    // 判断是否是商品详情页
+    if (url.startsWith('/pages/goods/detail')) {
+      // 小程序内部路由跳转
+      wx.navigateTo({
+        url: url,
+        fail: (err) => {
+          console.error('跳转失败:', err)
+          wx.showToast({
+            title: '页面跳转失败',
+            icon: 'none'
+          })
+        }
+      })
+    } else if (url.startsWith('/pages/')) {
+      // 其他小程序内部页面
+      wx.navigateTo({
+        url: url,
+        fail: (err) => {
+          // 如果是 tabBar 页面，使用 switchTab
+          wx.switchTab({
+            url: url,
+            fail: () => {
+              console.error('跳转失败:', err)
+              wx.showToast({
+                title: '页面跳转失败',
+                icon: 'none'
+              })
+            }
+          })
+        }
+      })
+    } else if (url.startsWith('http://') || url.startsWith('https://')) {
+      // 外部链接，复制到剪贴板
+      wx.setClipboardData({
+        data: url,
+        success: () => {
+          wx.showToast({
+            title: '链接已复制',
+            icon: 'success'
+          })
+        }
+      })
+    } else {
+      console.log('不支持的链接格式:', url)
+    }
+  },
+
   // ==================== 购物车相关方法 ====================
 
   /**
