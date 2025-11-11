@@ -47,11 +47,11 @@
 /* 订单列表 */
 .order-list {
   height: calc(100vh - 84rpx);
-  padding: 20rpx 30rpx;
+  padding: 20rpx 30rpx 30rpx 0rpx;
 }
 
 .order-item {
-  background: #ffffff;
+  background:rgba(255, 255, 255, 0.89);
   border-radius: 12rpx;
   margin-bottom: 16rpx;
   overflow: hidden;

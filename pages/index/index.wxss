@@ -253,8 +253,14 @@
   flex: 1;
   min-width: 0;
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  gap: 4rpx;
   overflow: hidden;
+}
+
+.current-price {
+  display: flex;
+  align-items: baseline;
 }
 
 .price-symbol {
@@ -267,14 +273,13 @@
   font-size: 40rpx;
   color: #FF3B30;
   font-weight: bold;
-  margin-right: 8rpx;
 }
 
 .original-price {
-  font-size: 24rpx;
+  font-size: 22rpx;
   color: #999999;
   text-decoration: line-through;
-  margin-left: 10rpx;
+  line-height: 1.2;
 }
 
 .add-btn {
@@ -307,6 +312,11 @@
   align-items: center;
   gap: 8rpx;
   flex-shrink: 0;
+  background: #f8f9fa;
+  border-radius: 32rpx;
+  padding: 6rpx 10rpx;
+  height: 56rpx;
+  box-sizing: border-box;
 }
 
 .quantity-btn {
@@ -317,6 +327,7 @@
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .quantity-btn.minus {
@@ -334,7 +345,7 @@
 }
 
 .quantity-btn .btn-icon {
-  font-size: 28rpx;
+  font-size: 26rpx;
   font-weight: bold;
 }
 
@@ -347,11 +358,12 @@
 }
 
 .quantity-text {
-  min-width: 40rpx;
+  min-width: 36rpx;
   text-align: center;
   font-size: 28rpx;
-  font-weight: 500;
+  font-weight: 600;
   color: #333333;
+  padding: 0 6rpx;
 }
 
 /* 加载状态 */

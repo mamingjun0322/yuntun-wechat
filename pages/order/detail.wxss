@@ -6,7 +6,7 @@
 
 .detail-content {
   height: calc(100vh - 140rpx);
-  padding: 20rpx 30rpx;
+  padding: 20rpx 30rpx 30rpx 0rpx;
 }
 
 /* 订单状态卡片 */

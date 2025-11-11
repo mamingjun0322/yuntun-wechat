@@ -102,8 +102,10 @@
               <text class="goods-desc">{{item.description}}</text>
               <view class="goods-footer">
                 <view class="price-box">
-                  <text class="price-symbol">¥</text>
-                  <text class="price-value">{{utils.formatPrice(item.price)}}</text>
+                  <view class="current-price">
+                    <text class="price-symbol">¥</text>
+                    <text class="price-value">{{utils.formatPrice(item.price)}}</text>
+                  </view>
                   <text class="original-price" wx:if="{{item.originalPrice}}">
                     ¥{{utils.formatPrice(item.originalPrice)}}
                   </text>
