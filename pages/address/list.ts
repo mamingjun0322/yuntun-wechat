@@ -39,11 +39,22 @@ Page({
 
       const res = await get(API.ADDRESS_LIST)
 
-      if (res.code === 0) {
+      // 兼容 code: 0 和 code: 200
+      if (res.code === 0 || res.code === 200) {
         this.setData({ addressList: res.data || [] })
+      } else {
+        console.error('加载地址列表失败：', res)
+        wx.showToast({
+          title: res.msg || '加载失败',
+          icon: 'none'
+        })
       }
     } catch (error) {
       console.error('加载地址列表失败', error)
+      wx.showToast({
+        title: '加载失败，请重试',
+        icon: 'none'
+      })
     } finally {
       wx.hideLoading()
     }

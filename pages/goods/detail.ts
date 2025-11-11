@@ -36,9 +36,16 @@ Page({
       // 兼容 code: 200 和 code: 0
       if (res.code === 200 || res.code === 0) {
         const goods = res.data
+        
+        // 处理图片URL
+        const images = (goods.images || []).map((img: string) => handleImageUrl(img))
+        
         this.setData({
-          goods,
-          images: goods.images || []
+          goods: {
+            ...goods,
+            images: images
+          },
+          images: images
         })
       }
     } catch (error) {
@@ -246,8 +253,6 @@ Page({
     wx.switchTab({
       url: '/pages/index/index'
     })
-  },
-
-  handleImageUrl
+  }
 })
 

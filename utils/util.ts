@@ -1,6 +1,7 @@
 /**
  * 通用工具函数
  */
+import { IMAGE_BASE_URL } from '../config/api'
 
 /**
  * 格式化价格（分转元）
@@ -69,6 +70,7 @@ export const debounce = (fn: Function, delay: number = 500) => {
 
 /**
  * 图片地址处理
+ * 配置在 config/api.ts 中的 IMAGE_BASE_URL
  */
 export const handleImageUrl = (url: string): string => {
   if (!url) return ''
@@ -76,8 +78,8 @@ export const handleImageUrl = (url: string): string => {
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url
   }
-  // 否则拼接BASE_URL
-  return 'http://localhost:8080' + url
+  // 否则拼接IMAGE_BASE_URL
+  return IMAGE_BASE_URL + url
 }
 
 /**

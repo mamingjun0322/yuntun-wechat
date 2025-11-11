@@ -37,7 +37,10 @@
     >
       <!-- 订单头部 -->
       <view class="order-header">
-        <text class="order-no">订单号：{{item.orderNo}}</text>
+        <view class="order-header-left">
+          <text class="order-no">订单号：{{item.orderNo}}</text>
+          <text class="order-time" wx:if="{{item.createTime}}">{{''}}</text>
+        </view>
         <text class="order-status status-{{item.status}}">{{getOrderStatusText(item.status)}}</text>
       </view>
 
@@ -46,7 +49,7 @@
         <view class="goods-item" wx:for="{{item.goodsList}}" wx:for-item="goods" wx:key="id">
           <image 
             class="goods-image" 
-            src="{{handleImageUrl(goods.image)}}"
+            src="{{goods.image}}"
             mode="aspectFill"
           ></image>
           <view class="goods-info">

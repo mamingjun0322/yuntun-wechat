@@ -30,6 +30,7 @@ Page({
     statusBarHeight: 0,
     shopInfo: {} as any,
     bannerList: [] as any[],
+    noticeList: [] as any[], // 通知列表
     categoryList: [] as CategoryItem[],
     currentCategory: 0, // 当前选中的分类，0表示全部
     goodsList: [] as GoodsItem[],
@@ -83,6 +84,7 @@ Page({
     await Promise.all([
       this.loadShopInfo(),
       this.loadBanners(),
+      this.loadNotices(),
       this.loadCategories(),
       this.loadGoods()
     ])
@@ -112,12 +114,35 @@ Page({
       const res = await get(API.SHOP_BANNER)
       // 兼容 code: 200 和 code: 0
       if (res.code === 200 || res.code === 0) {
-        this.setData({ bannerList: res.data || [] })
+        // 处理轮播图URL
+        const bannerList = (res.data || []).map((item: any) => ({
+          ...item,
+          image: handleImageUrl(item.image)
+        }))
+        this.setData({ bannerList })
       }
     } catch (error) {
       console.error('加载轮播图失败', error)
       // 使用空数组，避免页面崩溃
       this.setData({ bannerList: [] })
+    }
+  },
+
+  /**
+   * 加载通知列表
+   */
+  async loadNotices() {
+    try {
+      const res = await get(API.NOTICE_LIST, { status: 1 })
+      // 兼容 code: 200 和 code: 0
+      if (res.code === 200 || res.code === 0) {
+        const noticeList = res.data || []
+        this.setData({ noticeList })
+      }
+    } catch (error) {
+      console.error('加载通知失败', error)
+      // 使用空数组，避免页面崩溃
+      this.setData({ noticeList: [] })
     }
   },
 
@@ -176,8 +201,14 @@ Page({
       if (res.code === 200 || res.code === 0) {
         const list = res.data.records || []
         
+        // 处理图片URL
+        const listWithImage = list.map((item: any) => ({
+          ...item,
+          image: handleImageUrl(item.image)
+        }))
+        
         // 同步购物车数量到商品列表
-        const goodsListWithCart = this.syncCartQuantity(list)
+        const goodsListWithCart = this.syncCartQuantity(listWithImage)
         
         this.setData({
           goodsList: this.data.page === 1 ? goodsListWithCart : [...this.data.goodsList, ...goodsListWithCart],
@@ -645,11 +676,6 @@ Page({
     wx.navigateTo({
       url: '/pages/order/confirm'
     })
-  },
-
-  /**
-   * 处理图片URL
-   */
-  handleImageUrl
+  }
 })
 

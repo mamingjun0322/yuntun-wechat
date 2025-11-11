@@ -8,7 +8,7 @@
         <image 
           wx:else
           class="user-avatar" 
-          src="{{handleImageUrl(userInfo.avatar)}}"
+          src="{{userInfo.avatar}}"
           mode="aspectFill"
         ></image>
       </view>
@@ -58,15 +58,24 @@
     </view>
     <view class="order-tabs">
       <view class="order-tab" bindtap="goOrderList" data-status="1">
-        <text class="tab-icon">⏰</text>
+        <view class="tab-icon-wrapper">
+          <text class="tab-icon">⏰</text>
+          <view class="order-badge" wx:if="{{orderStats.pending > 0}}">{{orderStats.pending}}</view>
+        </view>
         <text class="tab-name">待支付</text>
       </view>
       <view class="order-tab" bindtap="goOrderList" data-status="2">
-        <text class="tab-icon">👨‍🍳</text>
+        <view class="tab-icon-wrapper">
+          <text class="tab-icon">👨‍🍳</text>
+          <view class="order-badge" wx:if="{{orderStats.processing > 0}}">{{orderStats.processing}}</view>
+        </view>
         <text class="tab-name">制作中</text>
       </view>
       <view class="order-tab" bindtap="goOrderList" data-status="3">
-        <text class="tab-icon">🚚</text>
+        <view class="tab-icon-wrapper">
+          <text class="tab-icon">🚚</text>
+          <view class="order-badge" wx:if="{{orderStats.delivering > 0}}">{{orderStats.delivering}}</view>
+        </view>
         <text class="tab-name">配送中</text>
       </view>
       <view class="order-tab" bindtap="goOrderList" data-status="4">

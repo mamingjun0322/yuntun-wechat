@@ -10,7 +10,8 @@
     "pages/user/user",
     "pages/address/list",
     "pages/address/edit",
-    "pages/payment/webview"
+    "pages/payment/webview",
+    "pages/service/service"
   ],
   "tabBar": {
     "color": "#666666",

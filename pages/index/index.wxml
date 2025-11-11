@@ -27,110 +27,134 @@
   
   <!-- 轮播图 -->
   <view class="banner-section" wx:if="{{bannerList.length}}">
-    <swiper class="banner-swiper" autoplay circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
+    <swiper class="banner-swiper" autoplay circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#667eea">
       <swiper-item wx:for="{{bannerList}}" wx:key="id" bindtap="onBannerTap" data-url="{{item.url}}">
         <image 
           class="banner-image" 
-          src="{{handleImageUrl(item.image)}}" 
+          src="{{item.image}}" 
           mode="aspectFill"
         ></image>
       </swiper-item>
     </swiper>
   </view>
   
-  <!-- 分类导航 -->
-  <view class="category-section" wx:if="{{categoryList.length}}">
-    <scroll-view class="category-scroll" scroll-x>
+  <!-- 通知栏 -->
+  <view class="notice-bar" wx:if="{{noticeList.length > 0}}">
+    <view class="notice-icon">📢</view>
+    <swiper 
+      class="notice-swiper" 
+      vertical 
+      autoplay 
+      circular 
+      interval="3000"
+      duration="500"
+    >
+      <swiper-item wx:for="{{noticeList}}" wx:key="id">
+        <view class="notice-content">{{item.content}}</view>
+      </swiper-item>
+    </swiper>
+  </view>
+  
+  <!-- 主内容区：左右布局 -->
+  <view class="main-container">
+    <!-- 左侧分类边栏 -->
+    <scroll-view class="category-sidebar" scroll-y>
       <view 
-        class="category-item {{currentCategory === 0 ? 'active' : ''}}"
+        class="sidebar-item {{currentCategory === 0 ? 'active' : ''}}"
         bindtap="selectCategory"
         data-id="{{0}}"
       >
-        <text class="category-name">全部</text>
+        <text class="sidebar-name">全部</text>
+        <view class="sidebar-indicator" wx:if="{{currentCategory === 0}}"></view>
       </view>
       <view 
-        class="category-item {{currentCategory === item.id ? 'active' : ''}}"
+        class="sidebar-item {{currentCategory === item.id ? 'active' : ''}}"
         wx:for="{{categoryList}}" 
         wx:key="id"
         bindtap="selectCategory"
         data-id="{{item.id}}"
       >
-        <text class="category-name">{{item.name}}</text>
+        <text class="sidebar-name">{{item.name}}</text>
+        <view class="sidebar-indicator" wx:if="{{currentCategory === item.id}}"></view>
       </view>
     </scroll-view>
-  </view>
-  
-  <!-- 商品列表 -->
-  <view class="goods-section">
-    <view class="goods-list">
-      <view 
-        class="goods-item" 
-        wx:for="{{goodsList}}" 
-        wx:key="id"
-        bindtap="goGoodsDetail"
-        data-id="{{item.id}}"
-      >
-        <image 
-          class="goods-image" 
-          src="{{handleImageUrl(item.image)}}" 
-          mode="aspectFill"
-        ></image>
-        <view class="goods-info">
-          <text class="goods-name">{{item.name}}</text>
-          <text class="goods-desc">{{item.description}}</text>
-          <view class="goods-footer">
-            <view class="price-box">
-              <text class="price-symbol">¥</text>
-              <text class="price-value">{{utils.formatPrice(item.price)}}</text>
-              <text class="original-price" wx:if="{{item.originalPrice}}">
-                ¥{{utils.formatPrice(item.originalPrice)}}
-              </text>
-            </view>
-            
-            <!-- 未添加时显示加号 -->
-            <view 
-              class="add-btn" 
-              catchtap="addToCart"
-              data-goods="{{item}}"
-              wx:if="{{!item.cartQuantity || item.cartQuantity === 0}}"
-            >
-              <text class="add-icon">+</text>
-            </view>
-            
-            <!-- 已添加时显示数量控制器 -->
-            <view class="goods-quantity-control" wx:else>
-              <view 
-                class="quantity-btn minus" 
-                catchtap="decreaseGoods"
-                data-id="{{item.id}}"
-              >
-                <text class="btn-icon">-</text>
-              </view>
-              <text class="quantity-text">{{item.cartQuantity}}</text>
-              <view 
-                class="quantity-btn plus" 
-                catchtap="increaseGoods"
-                data-id="{{item.id}}"
-              >
-                <text class="btn-icon">+</text>
+    
+    <!-- 右侧内容区 -->
+    <scroll-view class="content-area" scroll-y enable-back-to-top>
+      
+      <!-- 商品列表 -->
+      <view class="goods-section">
+        <view class="goods-list">
+          <view 
+            class="goods-item" 
+            wx:for="{{goodsList}}" 
+            wx:key="id"
+            bindtap="goGoodsDetail"
+            data-id="{{item.id}}"
+          >
+            <image 
+              class="goods-image" 
+              src="{{item.image}}" 
+              mode="aspectFill"
+            ></image>
+            <view class="goods-info">
+              <text class="goods-name">{{item.name}}</text>
+              <text class="goods-desc">{{item.description}}</text>
+              <view class="goods-footer">
+                <view class="price-box">
+                  <text class="price-symbol">¥</text>
+                  <text class="price-value">{{utils.formatPrice(item.price)}}</text>
+                  <text class="original-price" wx:if="{{item.originalPrice}}">
+                    ¥{{utils.formatPrice(item.originalPrice)}}
+                  </text>
+                </view>
+                
+                <!-- 未添加时显示加号 -->
+                <view 
+                  class="add-btn" 
+                  catchtap="addToCart"
+                  data-goods="{{item}}"
+                  wx:if="{{!item.cartQuantity || item.cartQuantity === 0}}"
+                >
+                  <text class="add-icon">+</text>
+                </view>
+                
+                <!-- 已添加时显示数量控制器 -->
+                <view class="goods-quantity-control" wx:else>
+                  <view 
+                    class="quantity-btn minus" 
+                    catchtap="decreaseGoods"
+                    data-id="{{item.id}}"
+                  >
+                    <text class="btn-icon">-</text>
+                  </view>
+                  <text class="quantity-text">{{item.cartQuantity}}</text>
+                  <view 
+                    class="quantity-btn plus" 
+                    catchtap="increaseGoods"
+                    data-id="{{item.id}}"
+                  >
+                    <text class="btn-icon">+</text>
+                  </view>
+                </view>
               </view>
             </view>
           </view>
         </view>
       </view>
-    </view>
-    
-    <!-- 加载状态 -->
-    <view class="load-more" wx:if="{{goodsList.length}}">
-      <text class="load-text" wx:if="{{!noMore}}">加载更多...</text>
-      <text class="load-text" wx:else>没有更多了</text>
-    </view>
-    
-    <!-- 空状态 -->
-    <view class="empty-state" wx:if="{{!loading && !goodsList.length}}">
-      <text class="empty-icon">🍱</text>
-      <text class="empty-text">暂无商品</text>
-    </view>
+      
+      <!-- 加载状态 -->
+      <view class="load-more" wx:if="{{goodsList.length}}">
+        <text class="load-text" wx:if="{{!noMore}}">加载更多...</text>
+        <text class="load-text" wx:else>没有更多了</text>
+      </view>
+      
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{!loading && !goodsList.length}}">
+        <text class="empty-icon">🍱</text>
+        <text class="empty-text">暂无商品</text>
+      </view>
+    </scroll-view>
   </view>
 
   <!-- 浮动购物车按钮 -->
@@ -167,7 +191,7 @@
           <!-- 商品信息 -->
           <image 
             class="cart-goods-image" 
-            src="{{handleImageUrl(item.image)}}" 
+            src="{{item.image}}" 
             mode="aspectFill"
           ></image>
 

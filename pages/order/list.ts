@@ -42,7 +42,25 @@ Page({
   onShow() {
     // 每次显示时刷新列表
     if (checkLogin()) {
-      this.setData({ page: 1, noMore: false })
+      // 检查是否有缓存的状态参数（从"我的"页面跳转过来）
+      const cachedStatus = wx.getStorageSync('orderListStatus')
+      if (cachedStatus) {
+        // 找到对应的 Tab 索引
+        const tabIndex = this.data.tabs.findIndex(tab => tab.status === Number(cachedStatus))
+        if (tabIndex > -1 && tabIndex !== this.data.currentTab) {
+          this.setData({ 
+            currentTab: tabIndex,
+            page: 1, 
+            noMore: false,
+            orderList: []
+          })
+        }
+        // 清除缓存，避免下次影响
+        wx.removeStorageSync('orderListStatus')
+      } else {
+        this.setData({ page: 1, noMore: false })
+      }
+      
       this.loadOrders()
     }
   },
@@ -101,8 +119,17 @@ Page({
       if (res.code === 200 || res.code === 0) {
         const list = res.data.records || []
         
+        // 处理商品图片URL
+        const processedList = list.map((order: any) => ({
+          ...order,
+          goodsList: (order.goodsList || []).map((goods: any) => ({
+            ...goods,
+            image: handleImageUrl(goods.image)
+          }))
+        }))
+        
         this.setData({
-          orderList: this.data.page === 1 ? list : [...this.data.orderList, ...list],
+          orderList: this.data.page === 1 ? processedList : [...this.data.orderList, ...processedList],
           noMore: list.length < this.data.pageSize
         })
       }
@@ -193,7 +220,8 @@ Page({
           price: item.price,
           quantity: item.quantity,
           specs: item.specs || {},
-          stock: 999
+          stock: 999,
+          selected: true
         })
       }
     })
@@ -212,7 +240,37 @@ Page({
     }, 1500)
   },
 
-  handleImageUrl,
+  /**
+   * 去评价
+   */
+  goComment(e: any) {
+    const id = e.currentTarget.dataset.id
+    wx.showToast({
+      title: '评价功能开发中',
+      icon: 'none'
+    })
+    // TODO: 跳转到评价页面
+    // wx.navigateTo({
+    //   url: `/pages/order/comment?id=${id}`
+    // })
+  },
+
+  /**
+   * 去首页
+   */
+  goIndex() {
+    wx.switchTab({
+      url: '/pages/index/index'
+    })
+  },
+
+  /**
+   * 阻止事件冒泡
+   */
+  stopPropagation() {
+    // 阻止点击事件冒泡到父元素
+  },
+
   getOrderStatusText
 })
 

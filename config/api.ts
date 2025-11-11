@@ -3,8 +3,16 @@
  * 根据后端 OpenAPI 文档配置
  */
 
+// ⚠️ 重要：小程序调试时需要修改为你的局域网IP或服务器IP
+// 开发环境-本地：http://localhost:8080/api（仅Web端可用）
+// 开发环境-小程序：http://192.168.x.x:8080/api（替换为你的局域网IP）
+// 生产环境：http://8.138.228.113:8080/api（服务器IP）
+
 // 基础URL - 请根据实际情况修改
-export const BASE_URL = 'http://localhost:8080/api'
+export const BASE_URL = 'http://localhost:8080/api'  // 请修改为你的IP
+
+// 图片URL基础地址（用于处理相对路径）
+export const IMAGE_BASE_URL = 'http://localhost:8080'  // 请修改为你的IP
 
 /**
  * API 接口配置
@@ -28,6 +36,9 @@ export const API = {
   
   // 获取轮播图
   SHOP_BANNER: '/shop/banner',
+  
+  // 获取通知列表
+  NOTICE_LIST: '/notice/list',
 
   // ==================== 商品相关 ====================
   
@@ -104,7 +115,24 @@ export const API = {
   // ==================== 文件上传 ====================
   
   // 上传图片
-  UPLOAD_IMAGE: '/upload/image'
+  UPLOAD_IMAGE: '/upload/image',
+
+  // ==================== 客服相关 ====================
+  
+  // 发送消息
+  SERVICE_SEND_MESSAGE: '/customerService/sendMessage',
+  
+  // 消息列表
+  SERVICE_MESSAGE_LIST: '/customerService/messageList',
+  
+  // 常见问题列表
+  FAQ_LIST: '/customerService/faqList',
+  
+  // 标记消息为已读
+  SERVICE_MARK_READ: '/customerService/markAsRead',
+  
+  // 获取客服配置
+  SERVICE_CONFIG: '/customerService/config'
 }
 
 /**

@@ -3,6 +3,7 @@
   "compileType": "miniprogram",
   "libVersion": "3.11.1",
   "projectname": "yuntun-wechat",
+  "miniprogramRoot": "./",
   "packOptions": {
     "ignore": [],
     "include": []

@@ -158,9 +158,31 @@
   align-items: center;
 }
 
+.tab-icon-wrapper {
+  position: relative;
+  margin-bottom: 12rpx;
+}
+
 .tab-icon {
   font-size: 48rpx;
-  margin-bottom: 12rpx;
+}
+
+.order-badge {
+  position: absolute;
+  top: -8rpx;
+  right: -16rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  line-height: 32rpx;
+  text-align: center;
+  background: #FF3B30;
+  color: #ffffff;
+  font-size: 20rpx;
+  font-weight: bold;
+  border-radius: 16rpx;
+  padding: 0 8rpx;
+  border: 2rpx solid #ffffff;
+  box-shadow: 0 2rpx 8rpx rgba(255, 59, 48, 0.3);
 }
 
 .tab-name {

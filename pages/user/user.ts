@@ -10,12 +10,13 @@ const app = getApp<IAppOption>()
 Page({
   data: {
     userInfo: null as any,
+    orderStats: {
+      pending: 0,      // 待支付
+      processing: 0,   // 制作中
+      delivering: 0,   // 配送中
+      completed: 0     // 已完成
+    },
     menuList: [
-      {
-        icon: '📋',
-        name: '我的订单',
-        path: '/pages/order/list'
-      },
       {
         icon: '📍',
         name: '地址管理',
@@ -39,7 +40,7 @@ Page({
       {
         icon: '💬',
         name: '联系客服',
-        path: ''
+        path: '/pages/service/service'
       },
       {
         icon: '⚙️',
@@ -55,8 +56,9 @@ Page({
       return
     }
     
-    // 已登录，加载用户信息
+    // 已登录，加载用户信息和订单统计
     this.loadUserInfo()
+    this.loadOrderStats()
   },
 
   /**
@@ -67,12 +69,50 @@ Page({
       const res = await get(API.USER_INFO)
       // 兼容 code: 200 和 code: 0
       if (res.code === 200 || res.code === 0) {
-        this.setData({ userInfo: res.data })
+        const userInfo = res.data
+        // 处理头像URL
+        if (userInfo.avatar) {
+          userInfo.avatar = handleImageUrl(userInfo.avatar)
+        }
+        this.setData({ userInfo })
         // 更新全局用户信息
-        app.globalData.userInfo = res.data
+        app.globalData.userInfo = userInfo
       }
     } catch (error) {
       console.error('加载用户信息失败', error)
+    }
+  },
+
+  /**
+   * 加载订单统计
+   */
+  async loadOrderStats() {
+    try {
+      const res = await get(API.ORDER_LIST, { page: 1, pageSize: 100 })
+      if (res.code === 200 || res.code === 0) {
+        const orders = res.data.records || []
+        
+        // 统计各状态订单数量
+        const stats = {
+          pending: 0,
+          processing: 0,
+          delivering: 0,
+          completed: 0
+        }
+        
+        orders.forEach((order: any) => {
+          switch (order.status) {
+            case 1: stats.pending++; break
+            case 2: stats.processing++; break
+            case 3: stats.delivering++; break
+            case 4: stats.completed++; break
+          }
+        })
+        
+        this.setData({ orderStats: stats })
+      }
+    } catch (error) {
+      console.error('加载订单统计失败', error)
     }
   },
 
@@ -90,8 +130,20 @@ Page({
    */
   goOrderList(e: any) {
     const status = e.currentTarget.dataset.status
-    wx.navigateTo({
-      url: `/pages/order/list?status=${status}`
+    const statusNum = Number(status)
+    
+    // 订单列表是 TabBar 页面，使用 switchTab 跳转
+    // 注意：switchTab 不支持传参，需要使用全局变量或缓存
+    if (statusNum > 0) {
+      // 如果有指定状态（1-5），先缓存状态
+      wx.setStorageSync('orderListStatus', statusNum)
+    } else {
+      // 查看全部（status=0），清除缓存状态
+      wx.removeStorageSync('orderListStatus')
+    }
+    
+    wx.switchTab({
+      url: '/pages/order/list'
     })
   },
 
@@ -127,8 +179,8 @@ Page({
       
       const userProfile = profileRes.userInfo
       
-      // 调用后端更新接口
-      const res = await put(API.USER_INFO, {
+      // 调用后端更新接口 - 修正为正确的API路径
+      const res = await put(API.USER_UPDATE, {
         nickname: userProfile.nickName,
         avatar: userProfile.avatarUrl
       })
@@ -166,7 +218,7 @@ Page({
             icon: 'success'
           })
 
-          setTimeout(() => {
+              setTimeout(() => {
             wx.reLaunch({
               url: '/pages/index/index'
             })
@@ -174,8 +226,6 @@ Page({
         }
       }
     })
-  },
-
-  handleImageUrl
+  }
 })
 

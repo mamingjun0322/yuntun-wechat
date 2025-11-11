@@ -40,19 +40,41 @@ Page({
 
       const res = await get(`${API.ADDRESS_DETAIL}/${this.data.id}`)
 
-      if (res.code === 0) {
+      // 兼容 code: 0 和 code: 200
+      if (res.code === 0 || res.code === 200) {
+        const data = res.data
+        
+        // 组合省市区为 region
+        let region = ''
+        if (data.province || data.city || data.district) {
+          region = `${data.province || ''} ${data.city || ''} ${data.district || ''}`.trim()
+        } else if (data.region) {
+          region = data.region
+        }
+        
         this.setData({
-          name: res.data.name,
-          phone: res.data.phone,
-          region: res.data.region,
-          address: res.data.address,
-          latitude: res.data.latitude,
-          longitude: res.data.longitude,
-          isDefault: res.data.isDefault
+          name: data.name || '',
+          phone: data.phone || '',
+          region: region,
+          address: data.address || '',
+          latitude: data.latitude || 0,
+          longitude: data.longitude || 0,
+          isDefault: data.isDefault || false
+        })
+        
+        console.log('地址详情加载成功：', this.data)
+      } else {
+        wx.showToast({
+          title: res.msg || '加载失败',
+          icon: 'none'
         })
       }
     } catch (error) {
       console.error('加载地址详情失败', error)
+      wx.showToast({
+        title: '加载失败，请重试',
+        icon: 'none'
+      })
     } finally {
       wx.hideLoading()
     }
@@ -180,34 +202,53 @@ Page({
     try {
       wx.showLoading({ title: '保存中...' })
 
+      // 解析省市区（简单处理，用空格分割）
+      const regionParts = this.data.region.trim().split(/\s+/)
+      const province = regionParts[0] || ''
+      const city = regionParts[1] || ''
+      const district = regionParts[2] || ''
+
       const addressData = {
         name: this.data.name,
         phone: this.data.phone,
-        region: this.data.region,
+        province: province,
+        city: city,
+        district: district,
         address: this.data.address,
-        latitude: this.data.latitude || 0,
-        longitude: this.data.longitude || 0,
         isDefault: this.data.isDefault
       }
 
+      let res
       if (this.data.isEdit) {
         // 编辑地址
-        await put(`${API.ADDRESS_EDIT}/${this.data.id}`, addressData)
+        res = await put(`${API.ADDRESS_EDIT}/${this.data.id}`, addressData)
       } else {
         // 新增地址
-        await post(API.ADDRESS_ADD, addressData)
+        res = await post(API.ADDRESS_ADD, addressData)
       }
 
-      wx.showToast({
-        title: '保存成功',
-        icon: 'success'
-      })
+      // 兼容不同的响应码
+      if (res.code === 0 || res.code === 200) {
+        wx.showToast({
+          title: '保存成功',
+          icon: 'success'
+        })
 
-      setTimeout(() => {
-        wx.navigateBack()
-      }, 1500)
+        setTimeout(() => {
+          wx.navigateBack()
+        }, 1500)
+      } else {
+        wx.showToast({
+          title: res.msg || '保存失败',
+          icon: 'none'
+        })
+      }
     } catch (error) {
       console.error('保存地址失败', error)
+      wx.showToast({
+        title: '保存失败，请重试',
+        icon: 'none'
+      })
     } finally {
       wx.hideLoading()
     }

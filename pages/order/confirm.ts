@@ -343,28 +343,38 @@ Page({
         // 清空临时数据
         wx.removeStorageSync('checkoutGoods')
 
-        wx.showToast({
-          title: '下单成功',
-          icon: 'success'
-        })
+        // 隐藏加载提示
+        wx.hideLoading()
 
         // 跳转到支付页面展示收款二维码
         // 优先使用 qrCodeUrl（收款码图片），如果没有则使用 paymentUrl
         const qrCodeUrl = res.data?.qrCodeUrl || res.data?.paymentUrl || ''
         
-        setTimeout(() => {
-          if (qrCodeUrl) {
-            // 有收款码，跳转到支付页面
-            wx.navigateTo({
-              url: `/pages/payment/webview?url=${encodeURIComponent(qrCodeUrl)}`
+        if (qrCodeUrl) {
+          // 有收款码，跳转到支付页面
+          wx.navigateTo({
+            url: `/pages/payment/webview?url=${encodeURIComponent(qrCodeUrl)}`,
+            success: () => {
+              // 跳转成功后显示提示
+              wx.showToast({
+                title: '请扫码支付',
+                icon: 'none'
+              })
+            }
+          })
+        } else {
+          // 没有收款码，跳转到订单列表
+          wx.showToast({
+            title: '订单已创建，请稍后支付',
+            icon: 'none',
+            duration: 2000
+          })
+          setTimeout(() => {
+            wx.switchTab({
+              url: '/pages/order/list'
             })
-          } else {
-            // 没有收款码，也跳转到支付页面，显示加载失败提示
-            wx.navigateTo({
-              url: `/pages/payment/webview?url=`
-            })
-          }
-        }, 1500)
+          }, 2000)
+        }
       }
     } catch (error) {
       console.error('提交订单失败', error)

@@ -1,0 +1,86 @@
+<!--pages/service/service.wxml-->
+<view class="service-container">
+  <!-- 常见问题 -->
+  <view class="faq-section" wx:if="{{faqList.length}}">
+    <view class="section-title">常见问题</view>
+    <view class="faq-list">
+      <view 
+        class="faq-item"
+        wx:for="{{faqList}}"
+        wx:key="id"
+        bindtap="toggleFaq"
+        data-index="{{index}}"
+      >
+        <view class="faq-question">
+          <text class="question-icon">💬</text>
+          <text class="question-text">{{item.question}}</text>
+          <text class="toggle-icon">{{item.expanded ? '▲' : '▼'}}</text>
+        </view>
+        <view class="faq-answer" wx:if="{{item.expanded}}">
+          <text>{{item.answer}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 消息列表 -->
+  <scroll-view 
+    class="message-list" 
+    scroll-y 
+    scroll-into-view="{{scrollToView}}"
+    scroll-with-animation
+  >
+    <view class="message-wrapper">
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{!messageList.length}}">
+        <text class="empty-icon">💬</text>
+        <text class="empty-text">暂无消息记录</text>
+        <text class="empty-hint">发送消息开始咨询</text>
+      </view>
+
+      <!-- 消息列表 -->
+      <view 
+        class="message-item {{item.type === 1 ? 'user-message' : 'service-message'}}"
+        wx:for="{{messageList}}"
+        wx:key="id"
+        id="msg-{{item.id}}"
+      >
+        <view class="message-avatar">
+          <text class="avatar-icon">{{item.type === 1 ? '👤' : '👨‍💼'}}</text>
+        </view>
+        <view class="message-content">
+          <view class="message-info">
+            <text class="message-name">{{item.type === 1 ? '我' : '客服'}}</text>
+            <text class="message-time">{{item.createTime}}</text>
+          </view>
+          <view class="message-bubble">
+            <text>{{item.content}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 输入框 -->
+  <view class="input-box">
+    <view class="input-top">
+      <text class="limit-tip">今日剩余次数：{{config.remaining}}/{{config.dailyLimit}}</text>
+    </view>
+    <view class="input-bottom">
+      <input 
+        class="message-input"
+        placeholder="请输入您要咨询的问题..."
+        value="{{inputMessage}}"
+        bindinput="inputMessage"
+        confirm-type="send"
+        bindconfirm="sendMessage"
+      />
+      <view 
+        class="send-btn {{inputMessage ? 'active' : ''}}"
+        bindtap="sendMessage"
+      >
+        发送
+      </view>
+    </view>
+  </view>
+</view>

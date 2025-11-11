@@ -24,11 +24,11 @@
         wx:for="{{images}}" 
         wx:key="index"
         bindtap="previewImage"
-        data-url="{{handleImageUrl(item)}}"
+        data-url="{{item}}"
       >
         <image 
           class="goods-image" 
-          src="{{handleImageUrl(item)}}" 
+          src="{{item}}" 
           mode="aspectFill"
         ></image>
       </swiper-item>
@@ -98,7 +98,7 @@
       <view class="modal-header">
         <image 
           class="modal-image" 
-          src="{{handleImageUrl(goods.images ? goods.images[0] : '')}}"
+          src="{{goods.images ? goods.images[0] : ''}}"
           mode="aspectFill"
         ></image>
         <view class="modal-info">
