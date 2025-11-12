@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/search/search",
     "pages/login/login",
     "pages/goods/detail",
     "pages/cart/cart",
@@ -8,6 +9,7 @@
     "pages/order/list",
     "pages/order/detail",
     "pages/user/user",
+    "pages/points/points",
     "pages/address/list",
     "pages/address/edit",
     "pages/payment/webview",

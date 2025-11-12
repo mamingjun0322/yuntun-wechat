@@ -36,12 +36,12 @@
 
   <!-- 积分和优惠券 -->
   <view class="stats-card card" wx:if="{{userInfo}}">
-    <view class="stat-item">
+    <view class="stat-item" bindtap="goPoints">
       <text class="stat-value">{{userInfo.points || 0}}</text>
       <text class="stat-label">积分</text>
     </view>
     <view class="stat-divider"></view>
-    <view class="stat-item">
+    <view class="stat-item" bindtap="goCoupons">
       <text class="stat-value">{{userInfo.couponCount || 0}}</text>
       <text class="stat-label">优惠券</text>
     </view>

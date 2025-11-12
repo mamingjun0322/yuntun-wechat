@@ -1,0 +1,122 @@
+<!--pages/search/search.wxml-->
+<wxs module="utils">
+  var formatPrice = function(price) {
+    return price.toFixed(2);
+  };
+  
+  module.exports = {
+    formatPrice: formatPrice
+  };
+</wxs>
+
+<view class="search-page">
+  <!-- 搜索栏 -->
+  <view class="search-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="search-content">
+      <view class="search-box">
+        <text class="icon-search">🔍</text>
+        <input 
+          class="search-input" 
+          type="text" 
+          placeholder="搜索商品名称"
+          value="{{keyword}}"
+          bindinput="onInputChange"
+          bindconfirm="onSearch"
+          focus="{{autoFocus}}"
+        />
+        <text class="icon-clear" wx:if="{{keyword}}" bindtap="onClearInput">✕</text>
+      </view>
+      <text class="btn-cancel" bindtap="onCancel">取消</text>
+    </view>
+  </view>
+
+  <!-- 搜索历史 -->
+  <view class="search-history" wx:if="{{!keyword && searchHistory.length > 0}}">
+    <view class="history-header">
+      <text class="history-title">搜索历史</text>
+      <text class="btn-clear-history" bindtap="onClearHistory">
+        <text class="icon-delete">🗑️</text>
+        清空
+      </text>
+    </view>
+    <view class="history-tags">
+      <view 
+        class="history-tag" 
+        wx:for="{{searchHistory}}" 
+        wx:key="index"
+        bindtap="onHistoryTap"
+        data-keyword="{{item}}"
+      >
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 热门搜索 -->
+  <view class="hot-search" wx:if="{{!keyword && hotKeywords.length > 0}}">
+    <view class="hot-header">
+      <text class="hot-title">🔥 热门搜索</text>
+    </view>
+    <view class="hot-tags">
+      <view 
+        class="hot-tag" 
+        wx:for="{{hotKeywords}}" 
+        wx:key="index"
+        bindtap="onHotKeywordTap"
+        data-keyword="{{item}}"
+      >
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <view class="search-result" wx:if="{{keyword && hasSearched}}">
+    <!-- 结果统计 -->
+    <view class="result-info" wx:if="{{goodsList.length > 0}}">
+      找到 <text class="result-count">{{total}}</text> 个相关商品
+    </view>
+
+    <!-- 商品列表 -->
+    <view class="goods-list" wx:if="{{goodsList.length > 0}}">
+      <view 
+        class="goods-item" 
+        wx:for="{{goodsList}}" 
+        wx:key="id"
+        bindtap="goGoodsDetail"
+        data-id="{{item.id}}"
+      >
+        <image 
+          class="goods-image" 
+          src="{{item.image}}" 
+          mode="aspectFill"
+        ></image>
+        <view class="goods-info">
+          <view class="goods-name">{{item.name}}</view>
+          <view class="goods-desc" wx:if="{{item.description}}">{{item.description}}</view>
+          <view class="goods-footer">
+            <view class="goods-price-box">
+              <text class="price-symbol">¥</text>
+              <text class="price-value">{{utils.formatPrice(item.price)}}</text>
+              <text class="price-original" wx:if="{{item.originalPrice}}">¥{{utils.formatPrice(item.originalPrice)}}</text>
+            </view>
+            <view class="goods-sales">已售{{item.sales || 0}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-result" wx:if="{{goodsList.length === 0 && !loading}}">
+      <image class="empty-icon" src="/images/empty-search.png" mode="aspectFit"></image>
+      <view class="empty-text">没有找到相关商品</view>
+      <view class="empty-tip">试试其他关键词吧~</view>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{goodsList.length > 0}}">
+      <text wx:if="{{loading}}">加载中...</text>
+      <text wx:elif="{{noMore}}">没有更多了</text>
+    </view>
+  </view>
+</view>

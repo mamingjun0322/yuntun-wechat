@@ -68,15 +68,10 @@ export const request = <T = any>(options: RequestOptions): Promise<ResponseData<
         if (res.statusCode === 200) {
           const result = res.data as ResponseData<T>
           // 兼容后端返回 code: 0 或 code: 200
-          if (result.code === 200) {
+          if (result.code === 200 || result.code === 0) {
             resolve(result)
           } else {
-            // 业务错误
-            wx.showToast({
-              title: result.msg || '请求失败',
-              icon: 'none',
-              duration: 2000
-            })
+            // 业务错误 - 不自动显示toast，让调用者处理
             reject(result)
           }
         } else {

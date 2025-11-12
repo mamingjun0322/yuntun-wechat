@@ -28,6 +28,15 @@ export const API = {
   
   // 更新用户信息
   USER_UPDATE: '/user/update',
+  
+  // 获取用户积分
+  USER_POINTS: '/user/points',
+  
+  // 获取积分明细
+  POINTS_HISTORY: '/user/points/history',
+  
+  // 签到
+  USER_SIGN_IN: '/user/signIn',
 
   // ==================== 店铺相关 ====================
   
@@ -47,6 +56,9 @@ export const API = {
   
   // 商品详情
   GOODS_DETAIL: '/goods/detail',
+  
+  // 搜索商品
+  GOODS_SEARCH: '/goods/search',
   
   // 分类列表
   CATEGORY_LIST: '/category/list',

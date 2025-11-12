@@ -1,0 +1,248 @@
+/* pages/points/points.wxss */
+.points-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+/* ========== 积分总览 ========== */
+.points-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 60rpx 40rpx;
+  color: #fff;
+}
+
+.points-total {
+  text-align: center;
+  margin-bottom: 40rpx;
+}
+
+.points-label {
+  display: block;
+  font-size: 28rpx;
+  opacity: 0.9;
+  margin-bottom: 16rpx;
+}
+
+.points-value {
+  display: block;
+  font-size: 88rpx;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* ========== 签到按钮 ========== */
+.sign-in-section {
+  display: flex;
+  justify-content: center;
+}
+
+.sign-in-btn {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 20rpx 48rpx;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 48rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+  font-size: 30rpx;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.sign-in-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.sign-icon {
+  font-size: 32rpx;
+}
+
+.signed-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 20rpx 48rpx;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 48rpx;
+  font-size: 28rpx;
+  opacity: 0.9;
+}
+
+.check-icon {
+  font-size: 32rpx;
+}
+
+/* ========== 积分规则 ========== */
+.points-rules {
+  margin: -40rpx 24rpx 24rpx;
+  padding: 32rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+}
+
+.rules-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+.rule-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.rule-item:last-child {
+  border-bottom: none;
+}
+
+.rule-icon {
+  font-size: 36rpx;
+  flex-shrink: 0;
+}
+
+.rule-text {
+  font-size: 28rpx;
+  color: #666;
+  flex: 1;
+}
+
+/* ========== 积分明细 ========== */
+.points-history {
+  margin: 0 24rpx;
+  padding: 0;
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.history-header {
+  padding: 32rpx 32rpx 24rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.history-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.history-list {
+  padding: 0 32rpx;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  flex: 1;
+}
+
+.history-icon {
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  background: #f5f5f5;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.history-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  flex: 1;
+}
+
+.history-title {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.history-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.history-points {
+  font-size: 36rpx;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.history-points.positive {
+  color: #52c41a;
+}
+
+.history-points.negative {
+  color: #ff4d4f;
+}
+
+/* ========== 空状态 ========== */
+.empty-history {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  opacity: 0.3;
+  margin-bottom: 24rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #999;
+  margin-bottom: 16rpx;
+}
+
+.empty-tip {
+  font-size: 26rpx;
+  color: #ccc;
+}
+
+/* ========== 加载更多 ========== */
+.load-more {
+  text-align: center;
+  padding: 40rpx 0;
+  font-size: 26rpx;
+  color: #999;
+}
+
+/* ========== 通用卡片样式 ========== */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}

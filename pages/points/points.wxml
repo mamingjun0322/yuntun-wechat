@@ -1,0 +1,73 @@
+<!--pages/points/points.wxml-->
+<view class="points-page">
+  <!-- 积分总览卡片 -->
+  <view class="points-header gradient-bg">
+    <view class="points-total">
+      <text class="points-label">我的积分</text>
+      <text class="points-value">{{totalPoints}}</text>
+    </view>
+    <view class="sign-in-section" wx:if="{{!hasSignedIn}}">
+      <view class="sign-in-btn" bindtap="signIn">
+        <text class="sign-icon">✨</text>
+        <text>签到领积分</text>
+      </view>
+    </view>
+    <view class="signed-tip" wx:else>
+      <text class="check-icon">✅</text>
+      <text>今日已签到</text>
+    </view>
+  </view>
+
+  <!-- 积分规则说明 -->
+  <view class="points-rules card">
+    <view class="rules-title">积分获取规则</view>
+    <view class="rule-item">
+      <text class="rule-icon">📅</text>
+      <text class="rule-text">每日签到可获得 {{signInPoints}} 积分</text>
+    </view>
+    <view class="rule-item">
+      <text class="rule-icon">🛒</text>
+      <text class="rule-text">订单完成每消费 1 元获得 {{orderPointsRate}} 积分</text>
+    </view>
+  </view>
+
+  <!-- 积分明细列表 -->
+  <view class="points-history card">
+    <view class="history-header">
+      <text class="history-title">积分明细</text>
+    </view>
+
+    <!-- 列表 -->
+    <view class="history-list" wx:if="{{historyList.length > 0}}">
+      <view 
+        class="history-item" 
+        wx:for="{{historyList}}" 
+        wx:key="id"
+      >
+        <view class="history-left">
+          <text class="history-icon">{{item.type === 1 ? '📅' : item.type === 2 ? '🛒' : '↩️'}}</text>
+          <view class="history-info">
+            <text class="history-title">{{item.title}}</text>
+            <text class="history-time">{{item.time}}</text>
+          </view>
+        </view>
+        <view class="history-points {{item.points > 0 ? 'positive' : 'negative'}}">
+          {{item.points > 0 ? '+' : ''}}{{item.points}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-history" wx:if="{{historyList.length === 0 && !loading}}">
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">暂无积分记录</text>
+      <text class="empty-tip">快去下单或签到获取积分吧~</text>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{historyList.length > 0}}">
+      <text wx:if="{{loading}}">加载中...</text>
+      <text wx:elif="{{noMore}}">没有更多了</text>
+    </view>
+  </view>
+</view>

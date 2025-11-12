@@ -382,9 +382,8 @@ Page({
    * 跳转到搜索页
    */
   goSearch() {
-    wx.showToast({
-      title: '搜索功能开发中',
-      icon: 'none'
+    wx.navigateTo({
+      url: '/pages/search/search'
     })
   },
 

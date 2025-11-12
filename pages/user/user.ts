@@ -30,7 +30,7 @@ Page({
       {
         icon: '⭐',
         name: '积分明细',
-        path: ''
+        path: '/pages/points/points'
       },
       {
         icon: '👤',
@@ -164,6 +164,25 @@ Page({
 
     wx.navigateTo({
       url: menu.path
+    })
+  },
+
+  /**
+   * 跳转到积分明细
+   */
+  goPoints() {
+    wx.navigateTo({
+      url: '/pages/points/points'
+    })
+  },
+
+  /**
+   * 跳转到优惠券
+   */
+  goCoupons() {
+    wx.showToast({
+      title: '优惠券功能开发中',
+      icon: 'none'
     })
   },
 
